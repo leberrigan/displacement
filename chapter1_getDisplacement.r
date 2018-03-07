@@ -29,7 +29,7 @@ subfolder <- "data/"
 newDatabase <- F
 
 # Load tag hits
-tagHits <- loadMotusData(projectID, database, newDatabase)
+tagHits <- loadMotusData(projectID, subfolder, newDatabase)
 
 # Create a vectors of BP and Seal sites
 bpsites <- c('BPHill','BPhill','BPLH','BPwestomni', 'BPLab', 'BPNorth', 'BPnorthomni', 'BPnorthyagi')
@@ -78,21 +78,8 @@ allSites %>%
   ylab('Julian Date')+
   ggtitle('Julian date by longitude')
 
-dCumumlative <- allSites %>%
-  group_by(tagDeployID) %>%
-  summarise(distCumulative = sum(dist))
 
-dNet <- allSites %>%
-  group_by(tagDeployID) %>%
-  summarise(lat.x = lat.x[which.min(ts.x)], 
-    lon.x = lon.x[which.min(ts.x)], 
-    lat.y = lat.y[which.max(ts.y)], 
-    lon.y = lon.y[which.max(ts.y)], 
-    recvDeployName.x = recvDeployName.x[which.min(ts.x)], 
-    recvDeployName.y = recvDeployName.y[which.max(ts.y)]) %>%
-  rowwise() %>%
-  mutate(dist = distHaversine(c(lon.x, lat.x), c(lon.y, lat.y)))
-
+# Create new dataframe and calculate cumulative and net displacement
 displacement <- allSites %>%
   group_by(tagDeployID) %>%
   summarise(distCumulative = sum(dist),
