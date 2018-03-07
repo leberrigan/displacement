@@ -57,6 +57,27 @@ tagMeta <- read_csv(paste0(subfolder, "Project109-sigplots-Flights.csv", collaps
 # Only select receivers from BP and Seal
 allSites <- siteTrans(fixedHits, latCoord = 'lat', lonCoord = 'lon')
 
+# Plot of latitude over julian date
+allSites %>%
+  rename(markerNumber = tagDeployID) %>%
+  left_join(tagMeta, by = 'markerNumber') %>%
+  ggplot(aes(as.integer(format(ts.y, "%j")), lat.y, group = markerNumber, color = age)) +
+  geom_line() +
+  scale_x_continuous()+
+  xlab('Julian Date')+
+  ggtitle('Latitude by julian date')
+
+
+# Plot julian date over longitude
+allSites %>%
+  rename(markerNumber = tagDeployID) %>%
+  left_join(tagMeta, by = 'markerNumber') %>%
+  ggplot(aes(lon.y, as.integer(format(ts.y, "%j")), group = markerNumber, color = age)) +
+  geom_line() +
+  scale_y_continuous()+
+  ylab('Julian Date')+
+  ggtitle('Julian date by longitude')
+
 dCumumlative <- allSites %>%
   group_by(tagDeployID) %>%
   summarise(distCumulative = sum(dist))
